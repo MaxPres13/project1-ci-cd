@@ -1,0 +1,17 @@
+FROM node:20-alpine
+
+# Legt das Arbeitsverzeichnis *im Container* fest.
+# /app existiert vorher nicht – Docker erzeugt es automatisch.
+WORKDIR /app
+
+# Kopiert package.json und package-lock.json in den Container
+COPY package.json package-lock.json ./
+
+# Installiert Dependencies (nur im Container, nicht bei dir lokal!).
+RUN npm install
+
+# Kopiert den Rest des Projektcodes in den Container nach /app.
+COPY . .
+
+# Startet die Entwicklungsumgebung von Vite.
+CMD ["npm", "run", "dev"]

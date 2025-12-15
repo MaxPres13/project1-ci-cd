@@ -1,0 +1,78 @@
+# → Einfacher Name der Pipeline.
+# → Wird im GitHub Actions UI angezeigt.
+name: CI Pipeline
+
+# push auf main → baut & veröffentlicht neue Versionen
+# pull_request → prüft Änderungen, bevor sie gemerged werden (darf nicht in main gemerged werden, wenn Build fehlschlägt)
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+
+jobs:
+  build-and-push:
+    # GitHub Actions startet eine virtuelle Maschine auf Ubuntu.
+    # Das ist dein Build‑Agent (CI Runner)
+    # Hat Docker & Node bereits vorinstalliert → schneller
+    runs-on: ubuntu-latest
+
+    steps:
+      # Dein Repository wird in die VM geklont
+      # Ohne diesen Schritt → GitHub Actions hat keinen Code, den sie bauen könnte
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # CI‑Builds müssen dieselbe Node-Version nutzen wie lokal & Prod
+      #verhindert: „bei mir läuft's, in CI nicht“
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # npm installiert alle Dependencies
+      # benötigt, damit Vite den Build machen kann
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      # Vite erzeugt dist/
+      # CI bricht sofort ab, wenn dein Code nicht baut
+      # Qualitätssicherung: Broken Builds kommen nicht in Docker oder in die Cloud
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      # Der CI Runner muss sich bei Docker Hub authentifizieren
+      # sonst kannst du keine Images pushen
+      # Secrets sind sicher gespeichert & werden NICHT geloggt
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # CI baut dein Production Image mit nginx
+      #Du bekommst zwei Tags:
+      #1️⃣ latest
+      #→ steht für „aktuellste Version“
+
+      #2️⃣ {github.sha}
+      # eindeutige Versionierung pro Commit
+      # perfekt für Rollbacks
+      # wird in echten DevOps‑Pipelines immer verwendet
+      - name: Build docker image
+        run: |
+          docker build \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:latest \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:${{ github.sha }} \
+            ./frontend
+
+      # Danach ist dein Image in Docker Hub verfügbar
+      # Jede Cloud (Azure, Render, AWS) kann dieses Image deployen
+      # Du hast Versionierung und Rückverfolgbarkeit
+      # Du kannst Deployment automatisieren (CD)
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:${{ github.sha }}

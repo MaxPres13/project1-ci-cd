@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:5173"
+    volumes:
+      # ./frontend:/app
+      # Bindet deinen lokalen Code in den Container ein.
+      # Änderst du z. B. src/App.jsx dann sieht der Container das sofort.
+      # /app/node_modules
+      # Extra-Mount, um das Node_Modules im Container nicht zu überschreiben.
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
