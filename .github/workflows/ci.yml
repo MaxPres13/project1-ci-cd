@@ -76,3 +76,16 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:${{ github.sha }}
+
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Restart Azure Web App to deploy new image
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp restart \
+              --name project1-frontend-app \
+              --resource-group project1-rg
