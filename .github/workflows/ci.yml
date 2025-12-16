@@ -36,6 +36,14 @@ jobs:
         working-directory: frontend
         run: npm install
 
+      # Tests werden ausgeführt
+      # Stellt sicher, dass dein Code funktioniert
+      # Verhindert, dass fehlerhafter Code in Produktion gelangt
+      # Ohne --run würde Vitest im Watch-Modus starten und der Job nie fertig werden.
+      - name: Run tests
+        working-directory: frontend
+        run: npm test -- --run
+
       # Vite erzeugt dist/
       # CI bricht sofort ab, wenn dein Code nicht baut
       # Qualitätssicherung: Broken Builds kommen nicht in Docker oder in die Cloud
@@ -76,6 +84,10 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/project-1-frontend:${{ github.sha }}
+
+      # Continuous Deployment (CD)
+      # Image wird in Azure Web App deployed
+      # Nach jedem Push auf main ist die neueste Version live
 
       - name: Azure login
         uses: azure/login@v1
