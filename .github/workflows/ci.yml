@@ -100,3 +100,4 @@ jobs:
             az webapp restart \
               --name project1-frontend-app \
               --resource-group project1-rg
+              --slot staging
