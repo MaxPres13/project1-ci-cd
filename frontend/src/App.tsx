@@ -5,6 +5,7 @@ function App() {
 			<h1>CD Prozess eingeführt (Test)</h1>{" "}
 			<h2>Testing mit vitest hinzugefügt</h2>
 			<h3>Deployment Flow geändert von DockerHub zu ACR</h3>
+			<h4>Staging Stand</h4>
 		</div>
 	);
 }
