@@ -20,42 +20,59 @@ resource "azurerm_container_registry" "acr" {
     admin_enabled = false
 }
 
-resource "azurerm_linux_web_app" "app" {
-    name = "project1-frontend-app"
-    location = azurerm_resource_group.rg.location
-    resource_group_name = azurerm_resource_group.rg.name
-    service_plan_id = azurerm_service_plan.plan.id
+resource "azurerm_app_service" "app" {
+  name                = "project1-frontend-app"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_service_plan.plan.id
 
-    identity {
-        type = "SystemAssigned"
-    }
+  identity {
+    type = "SystemAssigned"
+  }
 
-    site_config {
-        linux_fx_version =  "DOCKER|${azurerm_container_registry.acr.login_server}/project-1-frontend:latest"
-    }
+  site_config {
+    always_on        = true
+    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/project-1-frontend:latest"
+
+    acr_use_managed_identity_credentials = true
+    # Kein self reference!
+  }
 }
 
-resource "azurerm_linux_web_app_slot" "staging" {
-    name = "staging"
-    app_service_id = azurerm_linux_web_app.app.id
 
-    identity {
-        type = "SystemAssigned"
-    }
 
-       site_config {
-        linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/project-1-frontend:latest"
-    }
+
+resource "azurerm_app_service_slot" "staging" {
+  name                = "staging"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  app_service_plan_id = azurerm_service_plan.plan.id
+  app_service_name    = azurerm_app_service.app.name
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  site_config {
+    always_on        = true
+    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/project-1-frontend:latest"
+
+    acr_use_managed_identity_credentials = true
+  }
 }
+
+
+
 
 resource "azurerm_role_assignment" "acr_pull_app" {
-    principal_id = azurerm_linux_web_app.app.identity[0].principal_id
-    role_definition_name = "AcrPull"
-    scope = azurerm_container_registry.acr.id
+  principal_id         = azurerm_app_service.app.identity[0].principal_id
+  role_definition_name = "AcrPull"
+  scope                = azurerm_container_registry.acr.id
 }
 
+
 resource "azurerm_role_assignment" "acr_pull_staging" {
-    principal_id = azurerm_linux_web_app_slot.staging.identity[0].principal_id
-    role_definition_name = "AcrPull"
-    scope = azurerm_container_registry.acr.id
+  principal_id         = azurerm_app_service_slot.staging.identity[0].principal_id
+  role_definition_name = "AcrPull"
+  scope                = azurerm_container_registry.acr.id
 }
