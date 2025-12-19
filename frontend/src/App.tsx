@@ -13,6 +13,12 @@ function App() {
 			<h3>another blue green try</h3>
 			<h2>try to see if staging gets latest build without manuual swap</h2>
 			<h2>try if staging gets the last build</h2>
+			<h2>
+				Update: wieder hinzugefügt damit production die updates kriegt:
+				<br />
+				<br />
+				linux_fx_version = "DOCKER|$ registry/project-1-frontend:latest"
+			</h2>
 		</div>
 	);
 }

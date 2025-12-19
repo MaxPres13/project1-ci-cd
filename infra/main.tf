@@ -31,7 +31,9 @@ resource "azurerm_app_service" "app" {
   }
 
   site_config {
-    always_on                            = true
+    always_on        = true
+    linux_fx_version = "DOCKER|${azurerm_container_registry.acr.login_server}/project-1-frontend:latest"
+
     health_check_path                    = "/"
     acr_use_managed_identity_credentials = true
   }
