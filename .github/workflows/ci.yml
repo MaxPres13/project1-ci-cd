@@ -95,15 +95,16 @@ jobs:
           docker push project1registry.azurecr.io/project-1-frontend:latest
           docker push project1registry.azurecr.io/project-1-frontend:${{ github.sha }}
 
-      # Deplyoment auf Staging
-      - name: Restart Azure Web App to deploy new image
+      # Deployment auf Staging (setzt EXPLIZIT das Image)
+      - name: Deploy image to staging
         uses: azure/cli@v2
         with:
           inlineScript: |
-            az webapp restart \
+            az webapp config container set \
               --name project1-frontend-app \
               --resource-group project1-rg \
-              --slot staging
+              --slot staging \
+              --docker-custom-image-name project1registry.azurecr.io/project-1-frontend:${{ github.sha }}
 
       - name: Swap Staging to Production
         uses: azure/cli@v2
