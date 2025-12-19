@@ -20,6 +20,7 @@ function App() {
 				linux_fx_version = "DOCKER|$ registry/project-1-frontend:latest"
 			</h2>
 			<h2>staging soll auch den latest image bekommen beim deploy</h2>
+			<h2>deploy auf production wieder manuell</h2>
 		</div>
 	);
 }
