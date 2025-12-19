@@ -95,6 +95,7 @@ jobs:
           docker push project1registry.azurecr.io/project-1-frontend:latest
           docker push project1registry.azurecr.io/project-1-frontend:${{ github.sha }}
 
+      # Deplyoment auf Staging
       - name: Restart Azure Web App to deploy new image
         uses: azure/cli@v2
         with:

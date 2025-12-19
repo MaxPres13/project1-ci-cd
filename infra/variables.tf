@@ -1,3 +1,5 @@
+# Nur dann, wenn du terraform apply ausführst, wird das IMage genutzt
+
 variable "production_tag" {
   type        = string
   description = "Docker image tag used for Production slot"

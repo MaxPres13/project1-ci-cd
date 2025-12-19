@@ -11,6 +11,7 @@ function App() {
 			<h4>Automatic Deployment to production: Swap staging with production</h4>
 			<h3>production version uses fixed image tag instead of latest</h3>
 			<h3>another blue green try</h3>
+			<h2>try to see if staging gets latest build without manuual swap</h2>
 		</div>
 	);
 }
