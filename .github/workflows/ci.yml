@@ -10,6 +10,10 @@ on:
       - main
     pull_request:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-push:
     # GitHub Actions startet eine virtuelle Maschine auf Ubuntu.
