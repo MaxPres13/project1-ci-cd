@@ -12,6 +12,7 @@ function App() {
 			<h3>production version uses fixed image tag instead of latest</h3>
 			<h3>another blue green try</h3>
 			<h2>try to see if staging gets latest build without manuual swap</h2>
+			<h2>try if staging gets the last build</h2>
 		</div>
 	);
 }
