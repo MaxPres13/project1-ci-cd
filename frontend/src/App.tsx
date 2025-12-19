@@ -7,7 +7,8 @@ function App() {
 			<h3>Deployment Flow geändert von DockerHub zu ACR</h3>
 			<h4>Staging Stand (Swap aus Stanging mit Production)</h4>
 			<h4>Terraform Import from Azure Environment </h4>
-			<p>Alerts / Monitoring via Terraform in Azure gesetzt</p>
+			<h4>Alerts / Monitoring via Terraform in Azure gesetzt</h4>
+			<h4>Automatic Deployment to production: Swap staging with production</h4>
 		</div>
 	);
 }

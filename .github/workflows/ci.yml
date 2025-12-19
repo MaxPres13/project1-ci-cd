@@ -103,3 +103,13 @@ jobs:
               --name project1-frontend-app \
               --resource-group project1-rg \
               --slot staging
+
+      - name: Swap Staging to Production
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp deployment slot swap \
+              --name project1-frontend-app \
+              --resource-group project1-rg \
+              --slot staging \
+              --target-slot production
